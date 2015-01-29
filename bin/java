@@ -3,8 +3,8 @@
 DEFAULT_JDK_VERSION="1.7"
 
 JDK_URL_1_8="https://packages.${DOMAIN}/buildpack-java/openjdk8.jdk8-b132.tar.gz"
-JDK_URL_1_7="https://packages.${DOMAIN}/buildpack-java/openjdk7.jdk7u60-b03.tar.gz"
-JDK_URL_1_6="https://packages.${DOMAIN}/buildpack-java/openjdk6.b27.tar.gz"
+JDK_URL_1_7="https://packages.${DOMAIN}/buildpack-java/openjdk7.jdk7u80-b05.tar.gz"
+JDK_URL_1_6="https://packages.${DOMAIN}/buildpack-java/openjdk6.jdk6-b34.tar.gz"
 JVM_UTILS_URL="https://packages.${DOMAIN}/buildpack-jvm-utils-0.1.jar"
 
 install_java() {
