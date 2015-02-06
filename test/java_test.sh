@@ -6,7 +6,7 @@
 
 testOverlayDir() {
   mkdir -p ${BUILD_DIR}/.jdk/jre/bin
-  touch ${BUILD_DIR}/.jdk/jre/bin/java 
+  touch ${BUILD_DIR}/.jdk/jre/bin/java
   mkdir -p ${BUILD_DIR}/.jdk-overlay/jre/lib/security
   mkdir -p ${BUILD_DIR}/.jdk-overlay/jre/bin
   touch ${BUILD_DIR}/.jdk-overlay/jre/lib/security/policy.jar
@@ -33,14 +33,14 @@ test_installJavaWithoutDirectoryFails() {
   assertCapturedEquals "Invalid directory to install java."
 }
 
+# Test default/custom versions
+
 test_installDefaultJava() {
   unset JAVA_HOME # unsets environment -- shunit doesn't clean environment before each test
   capture install_java ${BUILD_DIR}
   assertCapturedSuccess
   assertTrue "A .jdk directory should be created when installing java." "[ -d ${BUILD_DIR}/.jdk ]"
   assertTrue "The java runtime should be present." "[ -f ${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java ]"
-  # make sure there's no tarball left in the slug
-  assertEquals "$(find ${BUILD_DIR} -name jdk.tar.gz | wc -l | sed 's/ //g')" "0"
   assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_home)" "${JAVA_HOME}"
   assertContains "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)" "${PATH}"
   assertTrue "A version file should have been created." "[ -f ${BUILD_DIR}/.jdk/version ]"
@@ -50,41 +50,45 @@ test_installDefaultJava() {
 
 test_installJavaWithVersion() {
   unset JAVA_HOME # unsets environment -- shunit doesn't clean environment before each test
-  capture install_java ${BUILD_DIR} "1.6"
+  capture install_java ${BUILD_DIR} "1.8"
   assertTrue "A .jdk directory should be created when installing java." "[ -d ${BUILD_DIR}/.jdk ]"
   assertTrue "The java runtime should be present." "[ -f ${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java ]"
   assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_home)" "${JAVA_HOME}"
   assertContains "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)" "${PATH}"
   assertTrue "A version file should have been created." "[ -f ${BUILD_DIR}/.jdk/version ]"
-  assertEquals "$(cat ${BUILD_DIR}/.jdk/version)" "1.6"
+  assertEquals "$(cat ${BUILD_DIR}/.jdk/version)" "1.8"
   assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
 }
 
-test_upgradeFrom1_6To1_7() {
-  unset JAVA_HOME # unsets environment -- shunit doesn't clean environment before each test
-  capture install_java ${BUILD_DIR} "1.6"
-  assertCapturedSuccess
-  assertTrue "Precondition: JDK6 should have been installed." "[ $(cat ${BUILD_DIR}/.jdk/version) = '1.6' ]"
-  assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
+# Test upgrading/downgrading between 7 & 8
 
-  capture install_java ${BUILD_DIR} "1.7"
-  assertCapturedSuccess
-  assertEquals "$(cat ${BUILD_DIR}/.jdk/version)" "1.7"
-  assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
-}
-
-test_upgradeFrom1_7To1_6() {
+test_upgradeFrom1_7To1_8() {
   unset JAVA_HOME # unsets environment -- shunit doesn't clean environment before each test
   capture install_java ${BUILD_DIR} "1.7"
   assertCapturedSuccess
   assertTrue "Precondition: JDK7 should have been installed." "[ $(cat ${BUILD_DIR}/.jdk/version) = '1.7' ]"
   assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
 
-  capture install_java ${BUILD_DIR} "1.6"
+  capture install_java ${BUILD_DIR} "1.8"
   assertCapturedSuccess
-  assertEquals "$(cat ${BUILD_DIR}/.jdk/version)" "1.6"
+  assertTrue "Precondition: JDK8 should have been installed." "[ $(cat ${BUILD_DIR}/.jdk/version) = '1.8' ]"
   assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
 }
+
+test_upgradeFrom1_8To1_7() {
+  unset JAVA_HOME # unsets environment -- shunit doesn't clean environment before each test
+  capture install_java ${BUILD_DIR} "1.8"
+  assertCapturedSuccess
+  assertTrue "Precondition: JDK8 should have been installed." "[ $(cat ${BUILD_DIR}/.jdk/version) = '1.8' ]"
+  assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
+
+  capture install_java ${BUILD_DIR} "1.7"
+  assertCapturedSuccess
+  assertTrue "Precondition: JDK7 should have been installed." "[ $(cat ${BUILD_DIR}/.jdk/version) = '1.7' ]"
+  assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
+}
+
+# Test installing specific versions
 
 test_installJavaWith1_5() {
   unset JAVA_HOME # unsets environment -- shunit doesn't clean environment before each test
@@ -93,6 +97,40 @@ test_installJavaWith1_5() {
   assertTrue "Precondition: JDK7 should have been installed." "[ $(cat ${BUILD_DIR}/.jdk/version) = '${DEFAULT_JDK_VERSION}' ]"
   assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
 }
+
+test_installJavaWith1_6() {
+  unset JAVA_HOME # unsets environment -- shunit doesn't clean environment before each test
+  capture install_java ${BUILD_DIR} "1.6"
+  assertCapturedSuccess
+  assertTrue "Precondition: JDK6 should have been installed." "[ $(cat ${BUILD_DIR}/.jdk/version) = '1.6' ]"
+  assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
+}
+
+test_installJavaWith1_7() {
+  unset JAVA_HOME # unsets environment -- shunit doesn't clean environment before each test
+  capture install_java ${BUILD_DIR} "1.7"
+  assertCapturedSuccess
+  assertTrue "Precondition: JDK7 should have been installed." "[ $(cat ${BUILD_DIR}/.jdk/version) = '1.7' ]"
+  assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
+}
+
+test_installJavaWith1_8() {
+  unset JAVA_HOME # unsets environment -- shunit doesn't clean environment before each test
+  capture install_java ${BUILD_DIR} "1.8"
+  assertCapturedSuccess
+  assertTrue "Precondition: JDK8 should have been installed." "[ $(cat ${BUILD_DIR}/.jdk/version) = '1.8' ]"
+  assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
+}
+
+test_installJavaWith1_9() {
+  unset JAVA_HOME # unsets environment -- shunit doesn't clean environment before each test
+  capture install_java ${BUILD_DIR} "1.9"
+  assertCapturedSuccess
+  assertTrue "Precondition: JDK9 should have been installed." "[ $(cat ${BUILD_DIR}/.jdk/version) = '1.9' ]"
+  assertEquals "${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/java" "$(which java)"
+}
+
+# Test cacert
 
 test_nonEmptyCacert1_6(){
   unset JAVA_HOME
@@ -118,5 +156,14 @@ test_nonEmptyCacert1_8(){
   assertCapturedSuccess
 
   CACERTS_COUNT="$(${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/keytool -list -v -keystore ${BUILD_DIR}/.jdk/jre/lib/security/cacerts -storepass changeit | grep "Alias name" | wc -l)"
+  assertTrue "Cacert file contains less than 100 domains" "[ $CACERTS_COUNT -gt "100" ]"
+}
+
+test_nonEmptyCacert1_9(){
+  unset JAVA_HOME
+  capture install_java ${BUILD_DIR} "1.9"
+  assertCapturedSuccess
+
+  CACERTS_COUNT="$(${BUILD_DIR}/.jdk/$(_get_relative_jdk_bin)/keytool -list -v -keystore ${BUILD_DIR}/.jdk/lib/security/cacerts -storepass changeit | grep "Alias name" | wc -l)"
   assertTrue "Cacert file contains less than 100 domains" "[ $CACERTS_COUNT -gt "100" ]"
 }
