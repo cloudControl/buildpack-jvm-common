@@ -2,10 +2,15 @@
 
 DEFAULT_JDK_VERSION="1.7"
 
-JDK_URL_1_9="https://packages.${DOMAIN}/buildpack-java/jdk-1.9.0-openjdk-x86_64-1.9.0_b49.tar.gz"
-JDK_URL_1_8="https://packages.${DOMAIN}/buildpack-java/jdk-1.8.0-openjdk-x86_64-1.8.0_u60-b01.tar.gz"
-JDK_URL_1_7="https://packages.${DOMAIN}/buildpack-java/jdk-1.7.0-openjdk-x86_64-1.7.0_u80-b05.tar.gz"
-JDK_URL_1_6="https://packages.${DOMAIN}/buildpack-java/openjdk6.jdk6-b34.tar.gz"
+get_latest_java_version() {
+  latest=$(curl -L "https://packages.${DOMAIN}/buildpack-java/latest$1") > /dev/null 2>&1
+  echo $latest
+}
+
+JDK_URL_1_9="https://packages.${DOMAIN}/buildpack-java/$(get_latest_java_version 9)"
+JDK_URL_1_8="https://packages.${DOMAIN}/buildpack-java/$(get_latest_java_version 8)"
+JDK_URL_1_7="https://packages.${DOMAIN}/buildpack-java/$(get_latest_java_version 7)"
+JDK_URL_1_6="https://packages.${DOMAIN}/buildpack-java/$(get_latest_java_version 6)"
 JVM_UTILS_URL="https://packages.${DOMAIN}/buildpack-jvm-utils-0.1.jar"
 
 install_java() {
