@@ -3,7 +3,7 @@
 DEFAULT_JDK_VERSION="1.7"
 
 get_latest_java_version() {
-  latest=$(curl -L "https://packages.${DOMAIN}/buildpack-java/latest$1") > /dev/null 2>&1
+  latest=$(curl --silent -L "https://packages.${DOMAIN}/buildpack-java/latest$1") > /dev/null 2>&1
   echo $latest
 }
 
