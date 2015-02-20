@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DEFAULT_JDK_VERSION="1.7"
+DEFAULT_JDK_VERSION="1.8"
 
 get_latest_java_version() {
   latest=$(curl --silent -L "https://packages.${DOMAIN}/buildpack-java/latest$1") > /dev/null 2>&1
