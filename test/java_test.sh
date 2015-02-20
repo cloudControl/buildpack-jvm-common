@@ -24,7 +24,7 @@ testDetectJava() {
 test_defaultJdkUrl() {
   capture _get_jdk_download_url "${DEFAULT_JDK_VERSION}"
   assertCapturedSuccess
-  assertTrue "The URL should be for the default JDK, ${DEFAULT_JDK_VERSION}." "[ $(cat ${STD_OUT}) = '${JDK_URL_1_7}' ]"
+  assertTrue "The URL should be for the default JDK, ${DEFAULT_JDK_VERSION}." "[ $(cat ${STD_OUT}) = '${JDK_URL_1_8}' ]"
 }
 
 test_installJavaWithoutDirectoryFails() {
